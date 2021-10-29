@@ -7,4 +7,9 @@ export namespace Configuracion {
   export const urlSms = "http://localhost:5000/sms"
   export const asuntoCambioClave = "Cambio de contraseña"
   export const asuntoCreacionUsuario = "Registro en la plataforma"
+  export const urlCrearToken = "http://localhost:5001/crear-token"
+  export const arg_nombre = "nombre"
+  export const arg_id_proponente = "id"
+  export const arg_rol = "id_rol"
+
 }

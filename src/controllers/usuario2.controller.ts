@@ -18,7 +18,7 @@ import {CredencialesRecuperarClave} from '../models/credenciales-recuperar-clave
 import {NotificacionSms} from '../models/notificacion-sms.model';
 //import {NotificacionCorreo, Usuario2} from '../models';
 import {Usuario2Repository} from '../repositories';
-import {AdministradorClavesService, NotificacionesService} from '../services';
+import {AdministradorClavesService, NotificacionesService, SesionUsuariosService} from '../services';
 
 export class Usuario2Controller {
   constructor(
@@ -27,7 +27,9 @@ export class Usuario2Controller {
     @service(AdministradorClavesService)
     public servicioClaves: AdministradorClavesService,
     @service(NotificacionesService)
-    public servivioNotificaciones: NotificacionesService
+    public servivioNotificaciones: NotificacionesService,
+    @service(SesionUsuariosService)
+    private SesionUsuariosService: SesionUsuariosService
   ) { }
 
   @post('/usuario2s')
@@ -185,17 +187,17 @@ export class Usuario2Controller {
     })
     credenciales: Credenciales,
   ): Promise<object | null> {
-    let usuario = await this.usuario2Repository.findOne({
-      where: {
-        correo: credenciales.usuario,
-        clave: credenciales.clave
-      }
-    });
+    let usuario = await this.SesionUsuariosService.IdentificarUsuario(credenciales);
+    let tk = "";
     if (usuario) {
       usuario.clave = "";
-      // generar token y agregarlo a la respuesta.
+      tk = await this.SesionUsuariosService.generarToken(usuario);
+      // console.log("TOKEN:" + tk);
     }
-    return usuario;
+    return {
+      token: tk,
+      usuario: usuario
+    };
   }
 
   @post('/cambiar-clave')
